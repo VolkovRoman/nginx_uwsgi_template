@@ -1,0 +1,9 @@
+**/*$py.class
+**/*.py[cod]
+**/__pycache__/
+**/tests/
+.docker/
+logs/
+media/
+static/
+venv/

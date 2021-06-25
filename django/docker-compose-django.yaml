@@ -1,0 +1,47 @@
+  version: '3'
+
+  services:
+    db:
+      image: postgres
+      environment:
+        - POSTGRES_DB=postgres
+        - POSTGRES_USER=postgres
+        - POSTGRES_PASSWORD=postgres
+      networks:
+        - django_template_network
+    web:
+      build:
+        context: .
+        dockerfile: ./django.Dockerfile
+      command: >
+        bash -c "
+        python django_template/manage.py collectstatic --no-input &&
+        python django_template/manage.py migrate --noinput &&
+        uwsgi --ini /uwsgi.ini"
+      # bash -c "sleep infinity"
+      hostname: uwsgi
+      volumes:
+      #  - .:/django_template
+        - ./deploy/uwsgi/log/:/var/log/uwsgi/
+        - ./deploy/uwsgi/tmp/:/tmp/
+        - ./deploy/uwsgi/uwsgi.ini:/uwsgi.ini
+      networks:
+        - django_template_network
+      depends_on:
+        - db
+    nginx:
+      image: nginx
+      restart: on-failure
+      ports:
+        - "0.0.0.0:80:80"
+      volumes:
+        - ./deploy/nginx/nginx.conf:/etc/nginx/conf.d/default.conf
+        - ./deploy/nginx/log/:/var/log/nginx/
+        - ./deploy/uwsgi/uwsgi_params:/usr/share/nginx/uwsgi_params
+      networks:
+        - django_template_network
+      depends_on:
+        - web
+
+  networks:
+    django_template_network:

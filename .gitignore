@@ -1,0 +1,13 @@
+**/*.iml
+*.pyc
+*.pyo
+
+/venv/
+/.idea/
+/.vscode/
+
+/static/
+/media/
+
+*.log
+__pycache__/
