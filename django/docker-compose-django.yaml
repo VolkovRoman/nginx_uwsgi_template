@@ -30,7 +30,7 @@
       depends_on:
         - db
     nginx:
-      image: nginx
+      image: nginx:1.21.4
       restart: on-failure
       ports:
         - "0.0.0.0:80:80"
